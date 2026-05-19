@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Modified Insertion Sort Lab – Odd Indices Only</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --panel: #ffffff;
+      --border: #d8dee9;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --text: #1e293b;
+      --muted: #64748b;
+      --success: #059669;
+      --fail: #dc2626;
+      --warn: #b45309;
+      --code-bg: #0f172a;
+      --code-fg: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    header {
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    header span {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(240px, 22%) 1fr minmax(260px, 26%);
+      gap: 0;
+      min-height: calc(100vh - 52px);
+    }
+
+    @media (max-width: 1024px) {
+      .layout {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+      }
+    }
+
+    .panel {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 1rem 1.1rem;
+      overflow-y: auto;
+    }
+
+    .panel:last-child {
+      border-right: none;
+    }
+
+    .panel h2 {
+      margin: 0 0 0.5rem;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--muted);
+    }
+
+    .panel h3 {
+      margin: 1rem 0 0.35rem;
+      font-size: 0.88rem;
+      color: var(--text);
+    }
+
+    .panel p,
+    .panel li {
+      font-size: 0.9rem;
+      margin: 0.35rem 0;
+    }
+
+    .panel ul {
+      margin: 0.25rem 0 0.75rem 1.1rem;
+      padding: 0;
+    }
+
+    .callout {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem;
+      margin: 0.75rem 0;
+      font-size: 0.88rem;
+    }
+
+    .think {
+      background: #fefce8;
+      border: 1px solid #fde047;
+      border-radius: 8px;
+      padding: 0.65rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.88rem;
+    }
+
+    .think ol {
+      margin: 0.35rem 0 0 1.1rem;
+      padding: 0;
+    }
+
+    .center-panel {
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      border-right: 1px solid var(--border);
+      min-height: 520px;
+    }
+
+    .center-panel .toolbar {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      background: #fafafa;
+    }
+
+    .center-panel textarea#code-editor {
+      flex: 3 1 0;
+      width: 100%;
+      margin: 0;
+      padding: 0.85rem;
+      border: none;
+      resize: vertical;
+      min-height: 220px;
+      font-family: "Consolas", "Monaco", "Courier New", monospace;
+      font-size: 0.85rem;
+      line-height: 1.45;
+      background: var(--code-bg);
+      color: var(--code-fg);
+    }
+
+    .center-panel textarea#code-editor:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: var(--accent-hover);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .btn.btn-secondary {
+      background: #475569;
+    }
+
+    .btn.btn-secondary:hover {
+      background: #334155;
+    }
+
+    .judge0-config {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.35rem;
+      flex: 1;
+      justify-content: flex-end;
+      min-width: 0;
+    }
+
+    .judge0-config label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .judge0-config input[type="password"],
+    .judge0-config input[type="text"] {
+      padding: 0.25rem 0.4rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-size: 0.78rem;
+      width: 9rem;
+      max-width: 100%;
+    }
+
+    .output-box {
+      border-top: 1px solid var(--border);
+      padding: 0.7rem 1rem;
+      background: var(--panel);
+      flex: 2 1 0;
+      min-height: 160px;
+      overflow-y: auto;
+      font-family: "Consolas", "Monaco", monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .sample-tests {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      margin-top: 0.6rem;
+      background: #f8fafc;
+      font-size: 0.85rem;
+    }
+
+    .sample-tests h3 {
+      margin: 0 0 0.35rem;
+      font-size: 0.85rem;
+    }
+
+    .sample-tests ol {
+      margin: 0;
+      padding-left: 1.1rem;
+    }
+
+    .sample-tests code {
+      background: #e2e8f0;
+      padding: 0 0.25rem;
+      border-radius: 3px;
+    }
+
+    .output-box .pass {
+      color: var(--success);
+    }
+
+    .output-box .err {
+      color: var(--fail);
+    }
+
+    .output-box .warn {
+      color: var(--warn);
+    }
+
+    .output-box .info {
+      color: var(--muted);
+    }
+
+    .output-box .hdr {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .chatbot .chat-messages {
+      height: min(42vh, 320px);
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem;
+      margin-bottom: 0.6rem;
+      background: #fafbfc;
+      font-size: 0.88rem;
+    }
+
+    .chatbot .msg {
+      margin: 0.45rem 0;
+      padding: 0.45rem 0.55rem;
+      border-radius: 6px;
+      max-width: 100%;
+    }
+
+    .chatbot .msg.user {
+      background: #dbeafe;
+      margin-left: 0.5rem;
+    }
+
+    .chatbot .msg.bot {
+      background: #f1f5f9;
+      margin-right: 0.5rem;
+    }
+
+    .chatbot .msg.system-warn {
+      background: #ffedd5;
+      border: 1px solid #fdba74;
+      color: #9a3412;
+    }
+
+    .chatbot label.block {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .chatbot textarea#chat-input {
+      width: 100%;
+      min-height: 64px;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.88rem;
+      resize: vertical;
+    }
+
+    .chatbot .chat-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.45rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .guardrail-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.35rem;
+    }
+
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Modified Insertion Sort Lab – Odd Indices Only</h1>
+    <span>Student coding lab · Python + optional <a href="https://ce.judge0.com/" target="_blank" rel="noopener">Judge0 CE</a> run</span>
+  </header>
+
+  <div class="layout">
+    <!-- LEFT: Problem -->
+    <aside class="panel">
+      <h2>Problem</h2>
+      <div class="callout">
+        <strong>Goal:</strong> Implement a routine that treats the input as a <em>0-based</em> array.
+        <ul>
+          <li><strong>Odd indices</strong> are 1, 3, 5, …</li>
+          <li><strong>Even indices</strong> are 0, 2, 4, …</li>
+          <li>You must <strong>sort only</strong> the values at odd indices.</li>
+          <li>Values at even indices must <strong>remain unchanged</strong> (same index, same value).</li>
+        </ul>
+      </div>
+
+      <h3>Illustration (no arrays shown)</h3>
+      <p style="font-size:0.9rem;margin:0 0 0.5rem">Picture the array as alternating “even slots” and “odd slots.” Only the values sitting in odd slots should end up sorted among themselves; each even slot keeps the same value in the same place.</p>
+
+      <h3>Constraints</h3>
+      <ul>
+        <li>Use Python 3. Implement <code>def sort_odd_indices_only(arr):</code> that returns a list.</li>
+        <li>Return a <strong>new</strong> list; do <strong>not</strong> mutate the argument passed in.</li>
+        <li>You may keep an <code>if __name__ == "__main__":</code> block for your own prints; tests run after it.</li>
+        <li>Straightforward O(n²)-style solutions are fine for lab-sized inputs.</li>
+        <li>A few sample tests are shown below; additional <strong>hidden</strong> tests are run on Judge0.</li>
+      </ul>
+
+      <div class="sample-tests" id="sample-tests"></div>
+    </aside>
+
+    <!-- CENTER: Code -->
+    <main class="panel center-panel">
+      <div class="toolbar">
+        <h2 style="margin:0">Code (Python)</h2>
+        <button type="button" class="btn btn-secondary" id="run-btn">Check code · Local help</button>
+        <button type="button" class="btn" id="judge0-btn">Run on Judge0</button>
+        <div class="judge0-config" title="Optional: only if your Judge0 host requires authentication">
+          <label for="judge0-token">Judge0 token</label>
+          <input type="password" id="judge0-token" placeholder="Bearer (optional)" autocomplete="off" />
+        </div>
+      </div>
+      <textarea id="code-editor" spellcheck="false"># Lab: sort ONLY values at odd indices (1, 3, 5, ...); even indices unchanged.
+#
+# Starter below uses classic insertion sort on the WHOLE list — wrong for this spec (intentional).
+# Graded test data is not embedded here; the autograder runs hidden tests.
+
+
+def sort_odd_indices_only(arr):
+    a = list(arr)
+    for i in range(1, len(a)):
+        key = a[i]
+        j = i - 1
+        while j >= 0 and a[j] > key:
+            a[j + 1] = a[j]
+            j -= 1
+        a[j + 1] = key
+    return a
+
+
+if __name__ == "__main__":
+    print("Lab loaded. Implement sort_odd_indices_only;")
+    print("correctness is judged with hidden tests (nothing to self-check here).")
+</textarea>
+      <div class="output-box" id="run-output" aria-live="polite">“Run on Judge0” runs hidden checks and reports only whether all tests passed or not. Serve this page over http(s)—not file://.</div>
+    </main>
+
+    <!-- RIGHT: Chat -->
+    <aside class="panel chatbot">
+      <h2>Ask for Help (Conceptual Only)</h2>
+      <div class="chat-messages" id="chat-messages"></div>
+
+      <label class="block" for="chat-input">Your question</label>
+      <textarea id="chat-input" placeholder="e.g. What does it mean to sort only odd indices?"></textarea>
+      <p class="guardrail-note" id="guardrail-text">
+        The assistant will NOT give direct solutions. Ask conceptual questions.
+      </p>
+      <div class="chat-actions">
+        <button type="button" class="btn" id="send-chat-btn">Send</button>
+        <span id="chat-status" style="font-size:.8rem;color:var(--muted)"></span>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      // WARNING: API keys in client-side HTML are visible to anyone with this file. Rotate the key if shared publicly; prefer a server proxy for real classrooms.
+      var GEMINI_API_KEY = "AIzaSyDnJtcN4qBkicDwZo-jSlHAZhP0ipva0X8";
+      var GEMINI_URL =
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" +
+        encodeURIComponent(GEMINI_API_KEY);
+
+      /** Judge0 CE (change for a self-hosted instance). Public CE: https://ce.judge0.com */
+      var JUDGE0_BASE = "https://ce.judge0.com";
+      /** Python (3.8.1) on Judge0 CE — see GET /languages on your host */
+      var JUDGE0_PYTHON_LANGUAGE_ID = 71;
+
+      /**
+       * Test vectors used on Judge0. `visible: true` are also listed in the left panel
+       * and revealed (input + expected + got) when they fail. Hidden tests stay opaque.
+       */
+      var LAB_TESTS = [
+        { input: [8, 3, 7, 1, 6, 2], expected: [8, 1, 7, 2, 6, 3], visible: true },
+        { input: [5, 2, 8, 4], expected: [5, 2, 8, 4], visible: true },
+        { input: [1, 9, 2, 8, 3, 7], expected: [1, 7, 2, 8, 3, 9], visible: false },
+        { input: [10, 4, 6, 2, 9, 5, 11, 1], expected: [10, 1, 6, 2, 9, 4, 11, 5], visible: false },
+      ];
+
+      /** stdout markers from injected harness. */
+      var JUDGE0_TEST_PREFIX = "LAB_TEST";
+      var JUDGE0_SUMMARY_PREFIX = "LAB_SUMMARY";
+
+      var SYSTEM_PROMPT =
+        "You are an educational teaching assistant embedded inside a coding lab environment.\n\n" +
+        "Your purpose is to HELP STUDENTS UNDERSTAND the given code, NOT to solve the problem for them.\n\n" +
+        "### CONTEXT\n\n" +
+        "Students are given a partially working or incorrect implementation of a modified Insertion Sort problem:\n\n" +
+        "\"Sort only elements at odd indices (0-based indexing), while keeping even-indexed elements unchanged.\" Students submit Python 3 implementations.\n\n" +
+        "### YOUR ROLE\n\n" +
+        "* Explain concepts\n* Clarify logic\n* Help interpret code behavior\n* Guide thinking through questions\n* Point out mistakes WITHOUT fixing them\n\n" +
+        "### STRICT RULES (DO NOT VIOLATE)\n\n" +
+        "1. ❌ DO NOT provide full solutions\n2. ❌ DO NOT generate complete corrected code\n3. ❌ DO NOT give direct answers like:\n   * \"Here is the correct code\"\n   * \"Replace this with...\"\n4. ❌ DO NOT write full insertion sort logic for odd indices\n5. ❌ DO NOT give step-by-step final implementation\n\n" +
+        "### ALLOWED BEHAVIOR\n\n" +
+        "You MAY explain insertion sort conceptually, explain odd indices (0-based), ask guiding questions, point out issues in general terms, and suggest thinking directions.\n\n" +
+        "### SAFE RESPONSE STRATEGY\n\n" +
+        "If a student asks for a direct solution, respond that you cannot provide the full solution but can help them think through it.\n\n" +
+        "### TONE\n\n" +
+        "Friendly, encouraging, non-judgmental, slightly Socratic.\n\n" +
+        "Stay strictly within these boundaries at all times.";
+
+      function runLocalLabCheck() {
+        var editor = document.getElementById("code-editor");
+        var out = document.getElementById("run-output");
+        var code = editor.value;
+        var lines = [];
+
+        lines.push({
+          cls: "hdr",
+          text: "What happened when you clicked the button?",
+        });
+
+        var issues = [];
+        if (code.indexOf("sort_odd_indices_only") === -1) {
+          issues.push("No 'sort_odd_indices_only' found.");
+        }
+        if (!/def\s+sort_odd_indices_only\s*\(\s*\w+\s*\)\s*:/.test(code)) {
+          issues.push("Expected: def sort_odd_indices_only(arr):");
+        }
+
+        if (issues.length) {
+          lines.push({ cls: "err", text: "Editor structure check:\n- " + issues.join("\n- ") });
+        } else {
+          lines.push({
+            cls: "pass",
+            text: "Editor structure check OK: sort_odd_indices_only is defined.",
+          });
+        }
+
+        lines.push({
+          cls: "info",
+          text:
+            "\nThis web page does not run Python locally—it only skim-reads your text above.\n\n" +
+            "Options:\n" +
+            "• Run on Judge0 — runs hidden tests; the panel shows only whether all passed or not.\n" +
+            "• Or on your laptop: save as solution.py, then:\n" +
+            "     python3 solution.py\n\n" +
+            "Local prints only confirm Python ran your file—not hidden grading.",
+        });
+
+        out.innerHTML = lines
+          .map(function (L) {
+            return '<span class="' + L.cls + '">' + escapeHtml(L.text) + "</span>";
+          })
+          .join("\n\n");
+      }
+
+      function judge0AuthHeader() {
+        var tok = (document.getElementById("judge0-token").value || "").trim();
+        if (!tok) return {};
+        return { Authorization: tok.indexOf("Bearer ") === 0 ? tok : "Bearer " + tok };
+      }
+
+      function buildJudge0PostHeaders() {
+        var h = { "Content-Type": "application/json" };
+        var a = judge0AuthHeader();
+        if (a.Authorization) h.Authorization = a.Authorization;
+        return h;
+      }
+
+      function buildJudge0GetHeaders() {
+        return judge0AuthHeader();
+      }
+
+      function pythonListLiteral(arr) {
+        return "[" + arr.join(", ") + "]";
+      }
+
+      /**
+       * Python harness appended to the student's code. Emits per-test markers:
+       *   LAB_TEST <i> PASS
+       *   LAB_TEST <i> FAIL_VISIBLE got=[...] reason=<MUTATED|MISMATCH|EXC:...>
+       *   LAB_TEST <i> FAIL_HIDDEN reason=<...>
+       *   LAB_SUMMARY <pass>/<total>
+       */
+      function generateLabJudge0Harness() {
+        var lines = [];
+        lines.push("");
+        lines.push("");
+        lines.push("def _lab_run_tests():");
+        lines.push("    _tests = [");
+        for (var t = 0; t < LAB_TESTS.length; t++) {
+          var tc = LAB_TESTS[t];
+          lines.push(
+            "        (" +
+              pythonListLiteral(tc.input) +
+              ", " +
+              pythonListLiteral(tc.expected) +
+              ", " +
+              (tc.visible ? "True" : "False") +
+              "),"
+          );
+        }
+        lines.push("    ]");
+        lines.push("    _passed = 0");
+        lines.push("    for _idx, (_inp, _exp, _visible) in enumerate(_tests):");
+        lines.push("        _arg = list(_inp)");
+        lines.push("        _snap = list(_inp)");
+        lines.push("        _got = None");
+        lines.push("        _status = None");
+        lines.push("        try:");
+        lines.push("            _got = sort_odd_indices_only(_arg)");
+        lines.push("            if _got is None:");
+        lines.push("                _status = 'MISMATCH'");
+        lines.push("            elif list(_arg) != list(_snap):");
+        lines.push("                _status = 'MUTATED'");
+        lines.push("            else:");
+        lines.push("                try:");
+        lines.push("                    _got_list = list(_got)");
+        lines.push("                except TypeError:");
+        lines.push("                    _got_list = None");
+        lines.push("                if _got_list is None or _got_list != list(_exp):");
+        lines.push("                    _status = 'MISMATCH'");
+        lines.push("        except Exception as _e:");
+        lines.push("            _status = 'EXC:' + type(_e).__name__");
+        lines.push("        if _status is None:");
+        lines.push("            print('LAB_TEST ' + str(_idx) + ' PASS')");
+        lines.push("            _passed += 1");
+        lines.push("        else:");
+        lines.push("            if _visible:");
+        lines.push("                if _got is None:");
+        lines.push("                    _got_str = 'null'");
+        lines.push("                else:");
+        lines.push("                    try:");
+        lines.push("                        _got_str = str(list(_got))");
+        lines.push("                    except TypeError:");
+        lines.push("                        _got_str = str(_got)");
+        lines.push("                print('LAB_TEST ' + str(_idx) + ' FAIL_VISIBLE got=' + _got_str + ' reason=' + _status)");
+        lines.push("            else:");
+        lines.push("                print('LAB_TEST ' + str(_idx) + ' FAIL_HIDDEN reason=' + _status)");
+        lines.push("    print('LAB_SUMMARY ' + str(_passed) + '/' + str(len(_tests)))");
+        lines.push("");
+        lines.push("");
+        lines.push("_lab_run_tests()");
+        lines.push("");
+        return lines.join("\n");
+      }
+
+      function buildJudge0SubmissionSource(editorCode) {
+        var trimmed = (editorCode || "").trim();
+        if (!trimmed) {
+          throw new Error("Editor is empty.");
+        }
+        if (!/def\s+sort_odd_indices_only\s*\(/.test(trimmed)) {
+          throw new Error("Define a function `def sort_odd_indices_only(arr):` before running tests.");
+        }
+        return trimmed + "\n" + generateLabJudge0Harness();
+      }
+
+      function normalizeJudge0Response(data) {
+        if (data && data.status_id != null && (!data.status || data.status.id == null)) {
+          data.status = {
+            id: data.status_id,
+            description: data.status && data.status.description ? data.status.description : "",
+          };
+        }
+        return data;
+      }
+
+      function pollJudge0Token(token, attempt) {
+        attempt = attempt || 0;
+        if (attempt > 60) {
+          return Promise.reject(new Error("Judge0: polling timed out."));
+        }
+        var url =
+          JUDGE0_BASE +
+          "/submissions/" +
+          encodeURIComponent(token) +
+          "?base64_encoded=false&fields=stdout,stderr,compile_output,message,status,status_id,time,memory";
+        return fetch(url, { method: "GET", headers: buildJudge0GetHeaders() }).then(function (res) {
+          return res.json().then(function (data) {
+            data = normalizeJudge0Response(data);
+            var sid = data.status && data.status.id != null ? data.status.id : data.status_id;
+            if (sid === 1 || sid === 2) {
+              return new Promise(function (resolve) {
+                setTimeout(function () {
+                  resolve(pollJudge0Token(token, attempt + 1));
+                }, 950);
+              });
+            }
+            return data;
+          });
+        });
+      }
+
+      function submitJudge0WithPolling(sourceCode) {
+        var url = JUDGE0_BASE + "/submissions?base64_encoded=false&wait=false";
+        var payload = {
+          source_code: sourceCode,
+          language_id: JUDGE0_PYTHON_LANGUAGE_ID,
+          stdin: "",
+        };
+        return fetch(url, {
+          method: "POST",
+          headers: buildJudge0PostHeaders(),
+          body: JSON.stringify(payload),
+        }).then(function (res) {
+          return res.json().then(function (data) {
+            if (!res.ok) {
+              var msg = (data && (data.error || data.message)) || res.statusText;
+              throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
+            }
+            if (!data.token) {
+              throw new Error("Judge0 returned no submission token.");
+            }
+            return pollJudge0Token(data.token, 0);
+          });
+        });
+      }
+
+      /**
+       * Run editor Python on Judge0 CE (requires CORS + network from the browser).
+       * @param {string} sourceCode already transformed for Judge0
+       */
+      function submitToJudge0(sourceCode) {
+        var url = JUDGE0_BASE + "/submissions?base64_encoded=false&wait=true";
+        var payload = {
+          source_code: sourceCode,
+          language_id: JUDGE0_PYTHON_LANGUAGE_ID,
+          stdin: "",
+        };
+        return fetch(url, {
+          method: "POST",
+          headers: buildJudge0PostHeaders(),
+          body: JSON.stringify(payload),
+        }).then(function (res) {
+          return res.json().then(function (data) {
+            var errText = data && (data.error || data.message);
+            if (res.status === 400 && errText && String(errText).toLowerCase().indexOf("wait") !== -1) {
+              return submitJudge0WithPolling(sourceCode);
+            }
+            if (!res.ok) {
+              var msg = errText || res.statusText || "Judge0 request failed";
+              throw new Error(typeof msg === "string" ? msg : JSON.stringify(msg));
+            }
+            return normalizeJudge0Response(data);
+          });
+        });
+      }
+
+      function arrToText(arr) {
+        return "[" + arr.join(", ") + "]";
+      }
+
+      function reasonHuman(reason) {
+        if (!reason) return "";
+        if (reason === "MUTATED") return "your function mutated the input array";
+        if (reason === "MISMATCH") return "returned array does not match expected";
+        if (reason.indexOf("EXC:") === 0) return "threw an exception (" + reason.slice(4) + ")";
+        return reason;
+      }
+
+      /** Returns array of segments {cls, text} based on per-test markers. */
+      function parseJudge0Stdout(stdout) {
+        var perTest = {};
+        var summary = null;
+        var lines = stdout.split(/\r?\n/);
+        var failGotPattern = / got=\[([^\]]*)\] reason=(.+)$/;
+        var hiddenReasonPattern = / reason=(.+)$/;
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          if (line.indexOf(JUDGE0_TEST_PREFIX + " ") === 0) {
+            var rest = line.slice((JUDGE0_TEST_PREFIX + " ").length);
+            var sp = rest.indexOf(" ");
+            if (sp === -1) continue;
+            var idx = parseInt(rest.slice(0, sp), 10);
+            var tail = rest.slice(sp + 1);
+            if (tail === "PASS") {
+              perTest[idx] = { ok: true };
+            } else if (tail.indexOf("FAIL_VISIBLE") === 0) {
+              var m = tail.slice("FAIL_VISIBLE".length).match(failGotPattern);
+              perTest[idx] = {
+                ok: false,
+                visible: true,
+                got: m ? "[" + m[1] + "]" : null,
+                reason: m ? m[2] : "",
+              };
+            } else if (tail.indexOf("FAIL_HIDDEN") === 0) {
+              var h = tail.slice("FAIL_HIDDEN".length).match(hiddenReasonPattern);
+              perTest[idx] = { ok: false, visible: false, reason: h ? h[1] : "" };
+            }
+          } else if (line.indexOf(JUDGE0_SUMMARY_PREFIX + " ") === 0) {
+            summary = line.slice((JUDGE0_SUMMARY_PREFIX + " ").length).trim();
+          }
+        }
+        return { perTest: perTest, summary: summary };
+      }
+
+      function buildResultsHtml(parsed) {
+        var perTest = parsed.perTest;
+        var total = LAB_TESTS.length;
+        var passed = 0;
+        var visibleFails = [];
+        var hiddenFails = [];
+        for (var i = 0; i < total; i++) {
+          var r = perTest[i];
+          if (r && r.ok) {
+            passed++;
+          } else if (r && !r.ok && r.visible) {
+            visibleFails.push({ idx: i, got: r.got, reason: r.reason });
+          } else {
+            hiddenFails.push({ idx: i, reason: r ? r.reason : "no result" });
+          }
+        }
+
+        var parts = [];
+        var summaryLine = "Tests passed: " + passed + " / " + total;
+        if (passed === total) {
+          parts.push('<span class="pass">' + escapeHtml("All test cases passed. " + summaryLine) + "</span>");
+          return parts.join("\n\n");
+        }
+        parts.push('<span class="err">' + escapeHtml(summaryLine) + "</span>");
+
+        if (visibleFails.length) {
+          var blocks = [];
+          for (var j = 0; j < visibleFails.length; j++) {
+            var f = visibleFails[j];
+            var tc = LAB_TESTS[f.idx];
+            var block =
+              "Sample test #" +
+              (f.idx + 1) +
+              " — " +
+              reasonHuman(f.reason) +
+              "\n  Input:    " +
+              arrToText(tc.input) +
+              "\n  Expected: " +
+              arrToText(tc.expected) +
+              "\n  Got:      " +
+              (f.got || "(none)");
+            blocks.push(block);
+          }
+          parts.push('<span class="err">' + escapeHtml(blocks.join("\n\n")) + "</span>");
+        }
+
+        if (hiddenFails.length) {
+          var hiddenLine =
+            "Hidden tests failed: " + hiddenFails.length + " (details kept private).";
+          parts.push('<span class="warn">' + escapeHtml(hiddenLine) + "</span>");
+        }
+
+        return parts.join("\n\n");
+      }
+
+      function formatJudge0Output(data) {
+        data = normalizeJudge0Response(data || {});
+        var stId = data.status && data.status.id != null ? data.status.id : data.status_id;
+        var stdout = data.stdout != null ? String(data.stdout) : "";
+
+        if (stId === 6) {
+          return (
+            '<span class="err">' +
+            escapeHtml("Compilation error — your code did not compile, so no tests ran.") +
+            "</span>"
+          );
+        }
+        if (stId !== 3) {
+          var stDesc = (data.status && data.status.description) || "Runtime error";
+          return (
+            '<span class="err">' +
+            escapeHtml(stDesc + " — tests could not finish. No tests passed.") +
+            "</span>"
+          );
+        }
+
+        var parsed = parseJudge0Stdout(stdout);
+        return buildResultsHtml(parsed);
+      }
+
+      function runJudgeOnJudge0() {
+        var out = document.getElementById("run-output");
+        var judgeBtn = document.getElementById("judge0-btn");
+        var checkBtn = document.getElementById("run-btn");
+        var code = document.getElementById("code-editor").value;
+
+        var submission;
+        try {
+          submission = buildJudge0SubmissionSource(code);
+        } catch (prepErr) {
+          out.innerHTML = '<span class="err">' + escapeHtml(String(prepErr.message || prepErr)) + "</span>";
+          return;
+        }
+
+        judgeBtn.disabled = true;
+        checkBtn.disabled = true;
+        out.innerHTML = '<span class="info">Running tests on Judge0…</span>';
+
+        submitToJudge0(submission)
+          .then(function (data) {
+            out.innerHTML = formatJudge0Output(data);
+          })
+          .catch(function (err) {
+            var msg = String(err.message || err);
+            if (msg.indexOf("Failed to fetch") !== -1) {
+              msg +=
+                "\n\nOpen this lab over http(s) (e.g. VS Code Live Server), not file://. If you use your own Judge0 host, set JUDGE0_BASE in the HTML script and check API token / CORS.";
+            }
+            out.innerHTML = '<span class="err">' + escapeHtml(msg) + "</span>";
+          })
+          .then(function () {
+            judgeBtn.disabled = false;
+            checkBtn.disabled = false;
+          });
+      }
+
+      function escapeHtml(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      /** Guardrail: returns { blocked: true, matched } or { blocked: false } */
+      function checkGuardrails(text) {
+        var lower = text.toLowerCase();
+        var forbidden = [
+          "give me code",
+          "provide solution",
+          "give me the code",
+          "give me solution",
+          "write the solution",
+          "complete solution",
+          "full solution",
+          "corrected code",
+          "fix my code for me",
+          "write my code",
+        ];
+
+        for (var i = 0; i < forbidden.length; i++) {
+          if (lower.indexOf(forbidden[i]) !== -1) {
+            return { blocked: true, matched: forbidden[i] };
+          }
+        }
+
+        /* Common variants without spaces */
+        if (lower.replace(/\s+/g, "").indexOf("givemecode") !== -1) {
+          return { blocked: true, matched: "give me code (variant)" };
+        }
+        if (lower.replace(/\s+/g, "").indexOf("providesolution") !== -1) {
+          return { blocked: true, matched: "provide solution (variant)" };
+        }
+
+        return { blocked: false };
+      }
+
+      /**
+       * Calls Gemini with current lab code + student question.
+       * @param {string} codeSnapshot
+       * @param {string} studentQuestion
+       * @returns {Promise<string>}
+       */
+      function callGeminiApi(codeSnapshot, studentQuestion) {
+        var userPayload =
+          "Current student code (Python):\n```python\n" +
+          codeSnapshot +
+          "\n```\n\nStudent question:\n" +
+          studentQuestion;
+
+        var body = {
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ role: "user", parts: [{ text: userPayload }] }],
+        };
+
+        return fetch(GEMINI_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        }).then(function (res) {
+          return res.json().then(function (data) {
+            if (!res.ok) {
+              var msg = data && data.error && data.error.message ? data.error.message : res.statusText;
+              throw new Error(msg || "API request failed");
+            }
+            var text =
+              data.candidates &&
+              data.candidates[0] &&
+              data.candidates[0].content &&
+              data.candidates[0].content.parts &&
+              data.candidates[0].content.parts[0] &&
+              data.candidates[0].content.parts[0].text;
+            if (!text) {
+              throw new Error("Unexpected API response shape.");
+            }
+            return text;
+          });
+        });
+      }
+
+      function appendChatMessage(role, text, extraClass) {
+        var box = document.getElementById("chat-messages");
+        var div = document.createElement("div");
+        div.className = "msg " + role + (extraClass ? " " + extraClass : "");
+        div.textContent = text;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+      }
+
+      function setChatStatus(msg) {
+        document.getElementById("chat-status").textContent = msg || "";
+      }
+
+      function sendChat() {
+        var input = document.getElementById("chat-input");
+        var question = (input.value || "").trim();
+        if (!question) return;
+
+        var guard = checkGuardrails(question);
+        if (guard.blocked) {
+          appendChatMessage(
+            "system-warn",
+            'Your message was not sent. Please ask a conceptual question. Blocked phrase pattern: "' +
+              guard.matched +
+              '".',
+            ""
+          );
+          return;
+        }
+
+        var codeSnap = document.getElementById("code-editor").value;
+        appendChatMessage("user", question, "");
+        input.value = "";
+        setChatStatus("Waiting for response…");
+
+        var btn = document.getElementById("send-chat-btn");
+        btn.disabled = true;
+
+        callGeminiApi(codeSnap, question)
+          .then(function (reply) {
+            appendChatMessage("bot", reply, "");
+            setChatStatus("");
+          })
+          .catch(function (err) {
+            appendChatMessage("bot", "Could not reach the assistant: " + String(err.message || err), "");
+            setChatStatus("");
+          })
+          .then(function () {
+            btn.disabled = false;
+          });
+      }
+
+      function renderSampleTests() {
+        var box = document.getElementById("sample-tests");
+        if (!box) return;
+        var visible = [];
+        for (var i = 0; i < LAB_TESTS.length; i++) {
+          if (LAB_TESTS[i].visible) visible.push({ idx: i, tc: LAB_TESTS[i] });
+        }
+        if (!visible.length) {
+          box.style.display = "none";
+          return;
+        }
+        var html = "<h3>Sample tests (others are hidden)</h3><ol>";
+        for (var v = 0; v < visible.length; v++) {
+          var t = visible[v].tc;
+          html +=
+            "<li><div>Input: <code>" +
+            escapeHtml(arrToText(t.input)) +
+            "</code></div><div>Expected: <code>" +
+            escapeHtml(arrToText(t.expected)) +
+            "</code></div></li>";
+        }
+        html += "</ol>";
+        box.innerHTML = html;
+      }
+
+      renderSampleTests();
+      document.getElementById("run-btn").addEventListener("click", runLocalLabCheck);
+      document.getElementById("judge0-btn").addEventListener("click", runJudgeOnJudge0);
+      document.getElementById("send-chat-btn").addEventListener("click", sendChat);
+      document.getElementById("chat-input").addEventListener("keydown", function (e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+          e.preventDefault();
+          sendChat();
+        }
+      });
+
+      appendChatMessage("bot", "Hi! Ask conceptual questions about odd indices or insertion sort in Python. I will not paste full fixed code.");
+    })();
+  </script>
+</body>
+</html>
